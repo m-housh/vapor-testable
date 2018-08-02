@@ -13,7 +13,7 @@ import XCTest
 extension XCTestCase {
     
     /// Fail on error.
-    func perform(_ closure: () throws -> ()) {
+    public func perform(_ closure: () throws -> ()) {
         do {
             try closure()
         } catch {
