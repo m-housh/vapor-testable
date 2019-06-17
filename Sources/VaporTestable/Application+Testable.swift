@@ -62,6 +62,25 @@ extension Application {
     }
     
     /// Helper method for testing routes.
+    public func sendRequest(
+        to path: String,
+        method: HTTPMethod,
+        headers: HTTPHeaders = .init()) throws -> Response {
+        
+        var headers = headers
+        
+        if !headers.contains(name: .contentType) {
+            headers.add(name: .contentType, value: "application/json")
+        }
+        
+        let responder = try self.make(Responder.self)
+        let request = HTTPRequest(method: method, url: URL(string: path)!, headers: headers)
+        let wrappedRequest = Request(http: request, using: self)
+        
+        return try responder.respond(to: wrappedRequest).wait()
+    }
+    
+    /// Helper method for testing routes.
     public func getResponse<C, T, Q>(
         to path: String,
         method: HTTPMethod = .GET,

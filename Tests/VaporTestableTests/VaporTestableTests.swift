@@ -55,6 +55,13 @@ final class VaporTestableTests: XCTestCase, VaporTestable {
         }
     }
     
+    func testSendRequestNoBody() {
+        perform {
+            let test = try app.sendRequest(to: "test", method: .GET)
+            XCTAssertEqual(test.http.status.code, 200)
+        }
+    }
+    
     func testSendRequestWithQuery() {
         perform {
             let query = TestQuery(page: 1)
