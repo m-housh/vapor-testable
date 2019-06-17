@@ -6,6 +6,10 @@ struct TestContent: Content {
     let value: String
 }
 
+struct TestQuery: Content {
+    let page: Int?
+}
+
 
 final class VaporTestableTests: XCTestCase, VaporTestable {
     
@@ -39,8 +43,6 @@ final class VaporTestableTests: XCTestCase, VaporTestable {
             let test = try app.getResponse(to: "test", decodeTo: TestContent.self)
             XCTAssertEqual(test.value, "Hello, world!")
             
-            let two = try app.sendRequest(to: "test", method: .GET)
-            XCTAssertEqual(two.http.status.code, 200)
         }
     }
     
@@ -50,6 +52,23 @@ final class VaporTestableTests: XCTestCase, VaporTestable {
             let resp = try app.sendRequest(to: "test", method: .POST, headers: ["Content-Type": "application/json"], body: content)
             
             XCTAssertEqual(resp.http.status.code, 200)
+        }
+    }
+    
+    func testSendRequestWithQuery() {
+        perform {
+            let query = TestQuery(page: 1)
+            let resp = try app.sendRequest(to: "test", method: .GET, headers: .init(), query: query)
+            XCTAssertEqual(resp.http.status.code
+                , 200)
+        }
+    }
+    
+    func testGetResponseWithQuery() {
+        perform {
+            let query = TestQuery(page: 1)
+            let test = try app.getResponse(to: "test", query: query, decodeTo: TestContent.self)
+            XCTAssertEqual(test.value, "Hello, world!")
         }
     }
 
